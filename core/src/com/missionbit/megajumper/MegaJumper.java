@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class MegaJumper extends ApplicationAdapter {
@@ -15,6 +16,8 @@ public class MegaJumper extends ApplicationAdapter {
     private Vector2 playerPosition;
     private Vector2 playerVelocity;
     private Vector2 gravity;
+    private Rectangle playerBounds;
+    private Platform platform;
 
     @Override
     public void create () {
@@ -25,12 +28,10 @@ public class MegaJumper extends ApplicationAdapter {
         playerPosition = new Vector2();
         playerVelocity = new Vector2();
         gravity = new Vector2();
+        playerBounds = new Rectangle();
+        platform = new Platform();
 
-        resetGame(){
-            playerVelocity.set(width/2,0);
-            playerVelocity.set(0,0);
-            gravity.set(0,-20);
-        };
+        resetGame();
     }
 
     @Override
@@ -43,24 +44,31 @@ public class MegaJumper extends ApplicationAdapter {
     }
 
     private void resetGame() {
-        //
+        playerVelocity.set(width/2,0);
+        playerVelocity.set(0,0);
+        gravity.set(0,-20);
+        playerBounds.set(width/2, 0, playerImage.getWidth(),playerImage.getHeight());
+        platform.bounds.set(0, 0, platform.image.getWidth(),platform.image.getHeight());
     }
 
     private void updateGame() {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if(Gdx.input.justTouched()){
+        if(Gdx.input.justTouched() || playerBounds.overlaps(platform.bounds)){
             playerVelocity.y = 500;
         }
 
-
         playerVelocity.add(gravity);
         playerPosition.mulAdd(playerVelocity,deltaTime);
+        playerBounds.setX(playerPosition.x);
+        playerBounds.setY(playerPosition.y);
+
     }
 
     private void drawGame() {
         batch.begin();
-        batch.draw(img, 0, 0);
+        batch.draw(playerImage, playerPosition.x, playerPosition.y);
+        batch.draw(platform.image, 0 , 0);
         batch.end();
     }
 }
