@@ -8,25 +8,26 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class MegaJumper extends ApplicationAdapter {
     private SpriteBatch batch;
-    private Texture playerImage;
     private int width;
     private int height;
     private Player player;
     private Vector2 gravity;
-    private Platform platform;
+    private ArrayList<Platform> platforms;
+    private int numPlatform;
 
     @Override
     public void create () {
         batch = new SpriteBatch();
-        playerImage = new Texture("missionbit.png");
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
         gravity = new Vector2();
-        platform = new Platform();
         player = new Player();
-
+        platforms = new ArrayList<Platform>();
+        numPlatform = 4;
         resetGame();
     }
 
@@ -43,15 +44,26 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(width/2,0);
         player.velocity.set(0,0);
         gravity.set(0,-20);
-        player.bounds.set(width/2, 0, playerImage.getWidth(),playerImage.getHeight());
-        platform.bounds.set(0, 0, platform.image.getWidth(),platform.image.getHeight());
+        player.bounds.set(width/2, 0, player.image.getWidth(),player.image.getHeight());
+
+        for (int i = 0; i < numPlatform; i++){
+            Platform platform = new Platform();
+            platform.bounds.set(((float)(Math.random() * width)), height/4 * i, platform.image.getWidth(),platform.image.getHeight());
+            platforms.add(platform);
+        }
     }
 
     private void updateGame() {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if(Gdx.input.justTouched() || player.bounds.overlaps(platform.bounds)){
+        if(Gdx.input.justTouched()){
             player.velocity.y = 500;
+        }
+
+        for (int i = 0; i< numPlatform; i++){
+            if (platforms.get(i).bounds.overlaps(player.bounds)){
+                player.velocity.y = 500;
+            }
         }
 
         player.velocity.add(gravity);
@@ -63,8 +75,10 @@ public class MegaJumper extends ApplicationAdapter {
 
     private void drawGame() {
         batch.begin();
-        batch.draw(playerImage, player.position.x, player.position.y);
-        batch.draw(platform.image, 0 , 0);
+        batch.draw(player.image, player.position.x, player.position.y);
+        for (int i= 0; i < numPlatform; i++){
+            batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
+        }
         batch.end();
     }
 }
