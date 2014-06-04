@@ -5,21 +5,32 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class MegaJumper extends ApplicationAdapter {
     private SpriteBatch batch;
-    private Texture img;
+    private Texture playerImage;
     private int width;
     private int height;
+    private Vector2 playerPosition;
+    private Vector2 playerVelocity;
+    private Vector2 gravity;
 
     @Override
     public void create () {
         batch = new SpriteBatch();
-        img = new Texture("missionbit.png");
+        playerImage = new Texture("missionbit.png");
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+        playerPosition = new Vector2();
+        playerVelocity = new Vector2();
+        gravity = new Vector2();
 
-        resetGame();
+        resetGame(){
+            playerVelocity.set(width/2,0);
+            playerVelocity.set(0,0);
+            gravity.set(0,-20);
+        };
     }
 
     @Override
@@ -32,11 +43,19 @@ public class MegaJumper extends ApplicationAdapter {
     }
 
     private void resetGame() {
-        //reset any game state variables here
+        //
     }
 
     private void updateGame() {
-        //apply all game rules here and check for win or loss
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        if(Gdx.input.justTouched()){
+            playerVelocity.y = 500;
+        }
+
+
+        playerVelocity.add(gravity);
+        playerPosition.mulAdd(playerVelocity,deltaTime);
     }
 
     private void drawGame() {
