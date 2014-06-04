@@ -13,10 +13,8 @@ public class MegaJumper extends ApplicationAdapter {
     private Texture playerImage;
     private int width;
     private int height;
-    private Vector2 playerPosition;
-    private Vector2 playerVelocity;
+    private Player player;
     private Vector2 gravity;
-    private Rectangle playerBounds;
     private Platform platform;
 
     @Override
@@ -25,11 +23,9 @@ public class MegaJumper extends ApplicationAdapter {
         playerImage = new Texture("missionbit.png");
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
-        playerPosition = new Vector2();
-        playerVelocity = new Vector2();
         gravity = new Vector2();
-        playerBounds = new Rectangle();
         platform = new Platform();
+        player = new Player();
 
         resetGame();
     }
@@ -44,30 +40,30 @@ public class MegaJumper extends ApplicationAdapter {
     }
 
     private void resetGame() {
-        playerVelocity.set(width/2,0);
-        playerVelocity.set(0,0);
+        player.velocity.set(width/2,0);
+        player.velocity.set(0,0);
         gravity.set(0,-20);
-        playerBounds.set(width/2, 0, playerImage.getWidth(),playerImage.getHeight());
+        player.bounds.set(width/2, 0, playerImage.getWidth(),playerImage.getHeight());
         platform.bounds.set(0, 0, platform.image.getWidth(),platform.image.getHeight());
     }
 
     private void updateGame() {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        if(Gdx.input.justTouched() || playerBounds.overlaps(platform.bounds)){
-            playerVelocity.y = 500;
+        if(Gdx.input.justTouched() || player.bounds.overlaps(platform.bounds)){
+            player.velocity.y = 500;
         }
 
-        playerVelocity.add(gravity);
-        playerPosition.mulAdd(playerVelocity,deltaTime);
-        playerBounds.setX(playerPosition.x);
-        playerBounds.setY(playerPosition.y);
+        player.velocity.add(gravity);
+        player.position.mulAdd(player.velocity,deltaTime);
+        player.bounds.setX(player.position.x);
+        player.bounds.setY(player.position.y);
 
     }
 
     private void drawGame() {
         batch.begin();
-        batch.draw(playerImage, playerPosition.x, playerPosition.y);
+        batch.draw(playerImage, player.position.x, player.position.y);
         batch.draw(platform.image, 0 , 0);
         batch.end();
     }
