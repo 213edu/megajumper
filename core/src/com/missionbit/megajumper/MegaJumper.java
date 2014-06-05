@@ -27,7 +27,7 @@ public class MegaJumper extends ApplicationAdapter {
         gravity = new Vector2();
         player = new Player();
         platforms = new ArrayList<Platform>();
-        numPlatform = 4;
+        numPlatform = 7;
         resetGame();
     }
 
@@ -48,13 +48,14 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
-            platform.bounds.set(((float)(Math.random() * width)), height/4 * i, platform.image.getWidth(),platform.image.getHeight());
+            platform.bounds.set(((float)(Math.random() * width)), height/7 * i, platform.image.getWidth(),platform.image.getHeight());
             platforms.add(platform);
         }
     }
 
     private void updateGame() {
         float deltaTime = Gdx.graphics.getDeltaTime();
+        float accelX = Gdx.input.getAccelerometerX();
 
         if(Gdx.input.justTouched()){
             player.velocity.y = 500;
@@ -62,10 +63,12 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i< numPlatform; i++){
             if (platforms.get(i).bounds.overlaps(player.bounds)){
-                player.velocity.y = 500;
+                player.velocity.y = 1000;
             }
         }
 
+
+        player.velocity.x = (accelX * -200);
         player.velocity.add(gravity);
         player.position.mulAdd(player.velocity,deltaTime);
         player.bounds.setX(player.position.x);
