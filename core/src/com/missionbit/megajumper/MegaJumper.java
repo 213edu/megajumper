@@ -3,6 +3,7 @@ package com.missionbit.megajumper;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -18,6 +19,7 @@ public class MegaJumper extends ApplicationAdapter {
     private Vector2 gravity;
     private ArrayList<Platform> platforms;
     private int numPlatform;
+    private OrthographicCamera camera;
 
     @Override
     public void create () {
@@ -28,6 +30,8 @@ public class MegaJumper extends ApplicationAdapter {
         player = new Player();
         platforms = new ArrayList<Platform>();
         numPlatform = 7;
+        camera = new OrthographicCamera(width,height);
+
         resetGame();
     }
 
@@ -45,6 +49,7 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(0,0);
         gravity.set(0,-20);
         player.bounds.set(width/2, 0, player.image.getWidth(),player.image.getHeight());
+        camera.position.set(player.position.x, player.position.y, 0);
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
@@ -78,6 +83,8 @@ public class MegaJumper extends ApplicationAdapter {
 
     private void drawGame() {
         batch.begin();
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
         batch.draw(player.image, player.position.x, player.position.y);
         for (int i= 0; i < numPlatform; i++){
             batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
