@@ -94,7 +94,15 @@ public class MegaJumper extends ApplicationAdapter {
         player.position.mulAdd(player.velocity,deltaTime);
         player.bounds.setX(player.position.x);
         player.bounds.setY(player.position.y);
+
+        if (camera.position.y < player.position.y){
         camera.position.set(width/2, player.position.y, 0);
+        }
+
+        if (player.position.y < camera.position.y - height/2){
+            System.out.println("u dead LOL");
+            //and switch game state into GAME_OVER
+        }
     }
 
     private void drawGame() {
