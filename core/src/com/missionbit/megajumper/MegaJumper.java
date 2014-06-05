@@ -35,7 +35,7 @@ public class MegaJumper extends ApplicationAdapter {
         gravity = new Vector2();
         player = new Player();
         platforms = new ArrayList<Platform>();
-        numPlatform = 100;
+        numPlatform = 6;
         camera = new OrthographicCamera(width,height);
         font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
 
@@ -58,6 +58,9 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(0,0);
         gravity.set(0,-20);
         player.bounds.set(width/2, 0, player.image.getWidth(),player.image.getHeight());
+
+
+        platforms.clear();
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
@@ -92,7 +95,14 @@ public class MegaJumper extends ApplicationAdapter {
                     player.velocity.y = height;
                     score++;
                 }
+
+                if (platforms.get(i).bounds.y < camera.position.y - height){
+                    platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
+                }
+
             }
+
+
 
             if (score > highscore) {
                 highscore = score;
@@ -115,13 +125,11 @@ public class MegaJumper extends ApplicationAdapter {
                 camera.position.set(width / 2, player.position.y, 0);
             }
 
+
             if (player.position.y < camera.position.y - height / 2) {
                 state = 2;
-
-
             }
         }
-
             if (state == 2) {
                 //display high score and touch to reset screen
                 if (Gdx.input.justTouched()) {
@@ -135,9 +143,9 @@ public class MegaJumper extends ApplicationAdapter {
 
         if (state == 0){
             batch.begin();
-            batch.draw(player.image, 0 , 0);
-            font.setColor(0,0,0,1);
-            font.draw(batch, "Tap to start", 0, height/2);
+            batch.draw(player.image, 0, 0);
+            font.setColor(0, 0, 0, 1);
+            font.draw(batch, "Tap to start", 0, height / 2);
             batch.end();
         }
 
