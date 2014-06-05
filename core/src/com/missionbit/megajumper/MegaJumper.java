@@ -116,7 +116,6 @@ public class MegaJumper extends ApplicationAdapter {
             }
 
             if (player.position.y < camera.position.y - height / 2) {
-                System.out.println("u dead LOL");
                 state = 2;
 
 
@@ -124,11 +123,10 @@ public class MegaJumper extends ApplicationAdapter {
         }
 
             if (state == 2) {
-                System.out.println("loser");
                 //display high score and touch to reset screen
                 if (Gdx.input.justTouched()) {
-                    System.out.println("touched");
                     resetGame();
+                    state = 1;
                 }
             }
     }
@@ -140,7 +138,6 @@ public class MegaJumper extends ApplicationAdapter {
             batch.draw(player.image, 0 , 0);
             font.setColor(0,0,0,1);
             font.draw(batch, "Tap to start", 0, height/2);
-            System.out.println("begin");
             batch.end();
         }
 
