@@ -61,76 +61,76 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
-            platform.bounds.set(((float)(Math.random() * width)), height/7 * i, platform.image.getWidth(),platform.image.getHeight());
+            platform.bounds.set(((float)(Math.random() * width)), height/3 * i, platform.image.getWidth(),platform.image.getHeight());
             platforms.add(platform);
         }
 
-        //camera.position.set(width/2, height/2, 0);
+
+        camera.position.set(width/2, height/2, 0);
         state = 0;
     }
 
     private void updateGame() {
 
-        if (state == 0){
+        if (state == 0) {
             //display starting screen
-            if(Gdx.input.justTouched()){
+            if (Gdx.input.justTouched()) {
                 state = 1;
             }
         }
 
-        if (state == 1){
+        if (state == 1) {
             float deltaTime = Gdx.graphics.getDeltaTime();
             float accelX = Gdx.input.getAccelerometerX();
 
-            if(Gdx.input.justTouched()){
-                player.velocity.y = 500;
+            if (Gdx.input.justTouched()) {
+                player.velocity.y = 50;
             }
 
-            for (int i = 0; i< numPlatform; i++){
-                if (platforms.get(i).bounds.overlaps(player.bounds)){
-                    player.velocity.y = 700;
+            for (int i = 0; i < numPlatform; i++) {
+                if (platforms.get(i).bounds.overlaps(player.bounds)) {
+                    player.velocity.y = height;
                     score++;
                 }
             }
 
-            if (score > highscore){
+            if (score > highscore) {
                 highscore = score;
             }
 
-            if (player.position.x < 0){
+            if (player.position.x < -player.image.getWidth()) {
                 player.position.x = width;
             }
-            if (player.position.x > width){
+            if (player.position.x > width) {
                 player.position.x = 0;
             }
             //thanks @RyanShee
-
             player.velocity.x = (accelX * -200);
             player.velocity.add(gravity);
-            player.position.mulAdd(player.velocity,deltaTime);
+            player.position.mulAdd(player.velocity, deltaTime);
             player.bounds.setX(player.position.x);
             player.bounds.setY(player.position.y);
 
-            if (camera.position.y < player.position.y){
-                camera.position.set(width/2, player.position.y, 0);
+            if (camera.position.y < player.position.y) {
+                camera.position.set(width / 2, player.position.y, 0);
             }
 
-            if (player.position.y < camera.position.y - height/2){
+            if (player.position.y < camera.position.y - height / 2) {
                 System.out.println("u dead LOL");
                 state = 2;
 
 
-        }
-
-        else if (state == 2){
-            //display high score and touch to reset screen
-            if (Gdx.input.justTouched()){
-                resetGame();
             }
         }
 
-
-        }
+            if (state == 2) {
+                System.out.println("loser");
+                //display high score and touch to reset screen
+                if (Gdx.input.justTouched()) {
+                    System.out.println("touched");
+                    resetGame();
+                }
+            }
     }
 
     private void drawGame() {
@@ -149,7 +149,7 @@ public class MegaJumper extends ApplicationAdapter {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             font.setScale(2);
-            font.setColor(0,0,0,1);
+            font.setColor(0, 0, 0, 1);
             font.draw(batch, "" + score, width / 2, camera.position.y + height / 2 - font.getLineHeight());
             batch.draw(player.image, player.position.x, player.position.y);
             for (int i= 0; i < numPlatform; i++){
@@ -158,12 +158,11 @@ public class MegaJumper extends ApplicationAdapter {
             batch.end();
         }
 
-        if (state == 2){
+        else if (state == 2){
             batch.begin();
             font.setColor(0,0,0,1);
-            font.draw(batch, "High Score: " + highscore, 0 , height/2);
-            font.draw(batch, "Tap to Restart", 0 , height/2 - font.getLineHeight());
-            System.out.print("END");
+            font.draw(batch, "High Score: " + highscore, camera.position.x - width /2 , camera.position.y);
+            font.draw(batch, "Tap to Restart", camera.position.x - width/ 2, camera.position.y - font.getLineHeight());
             batch.end();
         }
 

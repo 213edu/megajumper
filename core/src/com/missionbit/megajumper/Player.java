@@ -16,7 +16,7 @@ public class Player {
     public Vector2 velocity;
 
     public Player(){
-        image = new Texture("missionbit.png");
+        image = new Texture("ss.png");
         bounds = new Rectangle();
         position = new Vector2();
         velocity = new Vector2();
