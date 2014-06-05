@@ -85,14 +85,14 @@ public class MegaJumper extends ApplicationAdapter {
         if (state == 1) {
             float deltaTime = Gdx.graphics.getDeltaTime();
             float accelX = Gdx.input.getAccelerometerX();
-
+/*
             if (Gdx.input.justTouched()) {
-                player.velocity.y = 50;
+                player.velocity.y = height;
             }
-
+*/
             for (int i = 0; i < numPlatform; i++) {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
-                    player.velocity.y = height;
+                    player.velocity.y =  height;
                     score++;
                 }
 
