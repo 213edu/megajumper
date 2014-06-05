@@ -29,7 +29,7 @@ public class MegaJumper extends ApplicationAdapter {
         gravity = new Vector2();
         player = new Player();
         platforms = new ArrayList<Platform>();
-        numPlatform = 7;
+        numPlatform = 100;
         camera = new OrthographicCamera(width,height);
 
         resetGame();
@@ -49,13 +49,14 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(0,0);
         gravity.set(0,-20);
         player.bounds.set(width/2, 0, player.image.getWidth(),player.image.getHeight());
-        camera.position.set(player.position.x, player.position.y, 0);
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
             platform.bounds.set(((float)(Math.random() * width)), height/7 * i, platform.image.getWidth(),platform.image.getHeight());
             platforms.add(platform);
         }
+
+        camera.position.set(width/2, height/2, 0);
     }
 
     private void updateGame() {
@@ -68,7 +69,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i< numPlatform; i++){
             if (platforms.get(i).bounds.overlaps(player.bounds)){
-                player.velocity.y = 1000;
+                player.velocity.y = 700;
             }
         }
 
@@ -78,13 +79,13 @@ public class MegaJumper extends ApplicationAdapter {
         player.position.mulAdd(player.velocity,deltaTime);
         player.bounds.setX(player.position.x);
         player.bounds.setY(player.position.y);
-
+        camera.position.set(width/2, player.position.y, 0);
     }
 
     private void drawGame() {
-        batch.begin();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+        batch.begin();
         batch.draw(player.image, player.position.x, player.position.y);
         for (int i= 0; i < numPlatform; i++){
             batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
