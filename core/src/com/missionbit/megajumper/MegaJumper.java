@@ -64,7 +64,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
-            platform.bounds.set(((float)(Math.random() * width)), height/3 * i, platform.image.getWidth(),platform.image.getHeight());
+            platform.bounds.set(((float)(Math.random() * width - platform.image.getWidth())), height/3 * i, platform.image.getWidth(),platform.image.getHeight());
             platforms.add(platform);
         }
 
@@ -98,6 +98,7 @@ public class MegaJumper extends ApplicationAdapter {
 
                 if (platforms.get(i).bounds.y < camera.position.y - height){
                     platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
+                    platforms.get(i).bounds.x = ((float)(Math.random() * (width - platforms.get(i).image.getWidth())));
                 }
 
             }
