@@ -23,6 +23,8 @@ public class MegaJumper extends ApplicationAdapter {
     private OrthographicCamera camera;
     private BitmapFont font;
     private int score;
+    int highscore;
+    int state;
 
 
     @Override
@@ -63,59 +65,107 @@ public class MegaJumper extends ApplicationAdapter {
             platforms.add(platform);
         }
 
-        camera.position.set(width/2, height/2, 0);
+        //camera.position.set(width/2, height/2, 0);
+        state = 0;
     }
 
     private void updateGame() {
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        float accelX = Gdx.input.getAccelerometerX();
 
-        if(Gdx.input.justTouched()){
-            player.velocity.y = 500;
-        }
-
-        for (int i = 0; i< numPlatform; i++){
-            if (platforms.get(i).bounds.overlaps(player.bounds)){
-                player.velocity.y = 700;
-                score++;
+        if (state == 0){
+            //display starting screen
+            if(Gdx.input.justTouched()){
+                state = 1;
             }
         }
 
-        if (player.position.x < 0){
-            player.position.x = width;
-        }
-        if (player.position.x > width){
-            player.position.x = 0;
-        }
-        //thanks @RyanShee
+        if (state == 1){
+            float deltaTime = Gdx.graphics.getDeltaTime();
+            float accelX = Gdx.input.getAccelerometerX();
 
-        player.velocity.x = (accelX * -200);
-        player.velocity.add(gravity);
-        player.position.mulAdd(player.velocity,deltaTime);
-        player.bounds.setX(player.position.x);
-        player.bounds.setY(player.position.y);
+            if(Gdx.input.justTouched()){
+                player.velocity.y = 500;
+            }
 
-        if (camera.position.y < player.position.y){
-        camera.position.set(width/2, player.position.y, 0);
+            for (int i = 0; i< numPlatform; i++){
+                if (platforms.get(i).bounds.overlaps(player.bounds)){
+                    player.velocity.y = 700;
+                    score++;
+                }
+            }
+
+            if (score > highscore){
+                highscore = score;
+            }
+
+            if (player.position.x < 0){
+                player.position.x = width;
+            }
+            if (player.position.x > width){
+                player.position.x = 0;
+            }
+            //thanks @RyanShee
+
+            player.velocity.x = (accelX * -200);
+            player.velocity.add(gravity);
+            player.position.mulAdd(player.velocity,deltaTime);
+            player.bounds.setX(player.position.x);
+            player.bounds.setY(player.position.y);
+
+            if (camera.position.y < player.position.y){
+                camera.position.set(width/2, player.position.y, 0);
+            }
+
+            if (player.position.y < camera.position.y - height/2){
+                System.out.println("u dead LOL");
+                state = 2;
+
+
         }
 
-        if (player.position.y < camera.position.y - height/2){
-            System.out.println("u dead LOL");
-            //and switch game state into GAME_OVER
+        else if (state == 2){
+            //display high score and touch to reset screen
+            if (Gdx.input.justTouched()){
+                resetGame();
+            }
+        }
+
+
         }
     }
 
     private void drawGame() {
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        font.setScale(2);
-        font.setColor(0,0,0,1);
-        font.draw(batch, "" + score, width / 2, camera.position.y + height / 2 - font.getLineHeight());
-        batch.draw(player.image, player.position.x, player.position.y);
-        for (int i= 0; i < numPlatform; i++){
-            batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
+
+        if (state == 0){
+            batch.begin();
+            batch.draw(player.image, 0 , 0);
+            font.setColor(0,0,0,1);
+            font.draw(batch, "Tap to start", 0, height/2);
+            System.out.println("begin");
+            batch.end();
         }
-        batch.end();
+
+        if (state == 1){
+            camera.update();
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            font.setScale(2);
+            font.setColor(0,0,0,1);
+            font.draw(batch, "" + score, width / 2, camera.position.y + height / 2 - font.getLineHeight());
+            batch.draw(player.image, player.position.x, player.position.y);
+            for (int i= 0; i < numPlatform; i++){
+                batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
+            }
+            batch.end();
+        }
+
+        if (state == 2){
+            batch.begin();
+            font.setColor(0,0,0,1);
+            font.draw(batch, "High Score: " + highscore, 0 , height/2);
+            font.draw(batch, "Tap to Restart", 0 , height/2 - font.getLineHeight());
+            System.out.print("END");
+            batch.end();
+        }
+
     }
 }
