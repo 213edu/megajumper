@@ -81,6 +81,13 @@ public class MegaJumper extends ApplicationAdapter {
             }
         }
 
+        if (player.position.x < 0){
+            player.position.x = width;
+        }
+        if (player.position.x > width){
+            player.position.x = 0;
+        }
+        //thanks @RyanShee
 
         player.velocity.x = (accelX * -200);
         player.velocity.add(gravity);
