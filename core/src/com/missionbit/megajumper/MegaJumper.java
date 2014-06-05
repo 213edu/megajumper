@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -20,6 +21,9 @@ public class MegaJumper extends ApplicationAdapter {
     private ArrayList<Platform> platforms;
     private int numPlatform;
     private OrthographicCamera camera;
+    private BitmapFont font;
+    private int score;
+
 
     @Override
     public void create () {
@@ -31,6 +35,8 @@ public class MegaJumper extends ApplicationAdapter {
         platforms = new ArrayList<Platform>();
         numPlatform = 100;
         camera = new OrthographicCamera(width,height);
+        font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
+
 
         resetGame();
     }
@@ -45,6 +51,7 @@ public class MegaJumper extends ApplicationAdapter {
     }
 
     private void resetGame() {
+        score = 0;
         player.velocity.set(width/2,0);
         player.velocity.set(0,0);
         gravity.set(0,-20);
@@ -70,6 +77,7 @@ public class MegaJumper extends ApplicationAdapter {
         for (int i = 0; i< numPlatform; i++){
             if (platforms.get(i).bounds.overlaps(player.bounds)){
                 player.velocity.y = 700;
+                score++;
             }
         }
 
@@ -86,6 +94,9 @@ public class MegaJumper extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        font.setScale(2);
+        font.setColor(0,0,0,1);
+        font.draw(batch, "" + score, width / 2, camera.position.y + height / 2 - font.getLineHeight());
         batch.draw(player.image, player.position.x, player.position.y);
         for (int i= 0; i < numPlatform; i++){
             batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
