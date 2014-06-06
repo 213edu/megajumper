@@ -35,7 +35,7 @@ public class MegaJumper extends ApplicationAdapter {
         gravity = new Vector2();
         player = new Player();
         platforms = new ArrayList<Platform>();
-        numPlatform = 6;
+        numPlatform = 8;
         camera = new OrthographicCamera(width,height);
         font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
 
@@ -64,7 +64,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
-            platform.bounds.set(((float)(Math.random() * width - platform.image.getWidth())), height/3 * i, platform.image.getWidth(),platform.image.getHeight());
+            platform.bounds.set(((float)(Math.random() * width - platform.image.getWidth())), height/5 * i, platform.image.getWidth(),platform.image.getHeight());
             platforms.add(platform);
         }
 
@@ -92,7 +92,7 @@ public class MegaJumper extends ApplicationAdapter {
 */
             for (int i = 0; i < numPlatform; i++) {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
-                    player.velocity.y =  height;
+                    player.velocity.y =  2 * height;
                     score++;
                 }
 
