@@ -14,7 +14,7 @@ public class Platform {
     public Rectangle bounds;
 
     public Platform(){
-        image = new Texture("boost_256.png");
+        image = new Texture("boost_192.png");
         bounds = new Rectangle();
 
     }
