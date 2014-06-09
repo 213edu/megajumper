@@ -30,6 +30,9 @@ public class MegaJumper extends ApplicationAdapter {
     int highscore;
     int state;
     Platform singlePlatform;
+    Music bgm;
+    //Sound ding;
+
 
 
     float randomWithRange(float min, float max)
@@ -50,8 +53,8 @@ public class MegaJumper extends ApplicationAdapter {
         camera = new OrthographicCamera(width,height);
         font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
         singlePlatform = new Platform();
-        Sound ding = Gdx.audio.newSound(Gdx.files.internal("ding.mp3"));
-        Music bgm = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        //Sound ding = Gdx.audio.newSound(Gdx.files.internal("ding.mp3"));
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 
         resetGame();
     }
@@ -94,6 +97,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         camera.position.set(width/2, height/2, 0);
         state = 0;
+        bgm.play();
     }
 
     private void updateGame() {
