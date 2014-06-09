@@ -1,7 +1,10 @@
 package com.missionbit.megajumper;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -47,6 +50,8 @@ public class MegaJumper extends ApplicationAdapter {
         camera = new OrthographicCamera(width,height);
         font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
         singlePlatform = new Platform();
+        Sound ding = Gdx.audio.newSound(Gdx.files.internal("ding.mp3"));
+        Music bgm = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 
         resetGame();
     }
