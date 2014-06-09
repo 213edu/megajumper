@@ -2,6 +2,7 @@ package com.missionbit.megajumper;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,7 +26,14 @@ public class MegaJumper extends ApplicationAdapter {
     private int score;
     int highscore;
     int state;
+    Platform singlePlatform;
 
+
+    float randomWithRange(float min, float max)
+    {
+        float range = (max - min) + 1;
+        return (float)(Math.random() * range) + min;
+    }
 
     @Override
     public void create () {
@@ -35,10 +43,10 @@ public class MegaJumper extends ApplicationAdapter {
         gravity = new Vector2();
         player = new Player();
         platforms = new ArrayList<Platform>();
-        numPlatform = 8;
+        numPlatform = 2;
         camera = new OrthographicCamera(width,height);
         font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
-
+        singlePlatform = new Platform();
 
         resetGame();
     }
@@ -53,20 +61,30 @@ public class MegaJumper extends ApplicationAdapter {
     }
 
     private void resetGame() {
+
+
+
         score = 0;
         player.velocity.set(width/2,0);
         player.velocity.set(0,0);
         gravity.set(0,-20);
-        player.bounds.set(width/2, 0, player.image.getWidth(),player.image.getHeight());
-
+        player.bounds.set(width/2, player.image.getHeight(), player.image.getWidth(),player.image.getHeight());
 
         platforms.clear();
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
-            platform.bounds.set(((float)(Math.random() * width - platform.image.getWidth())), height/5 * i, platform.image.getWidth(),platform.image.getHeight());
+            platform.bounds.set(randomWithRange(0, platform.image.getWidth() + platform.bounds.x), height * i, platform.image.getWidth(),platform.image.getHeight());
+            if (platform.bounds.x > width - platform.image.getWidth()){
+                platform.bounds.x = 0;
+            }
+            if (player.bounds.x < 0){
+                platform.bounds.x = width - platform.image.getHeight();
+            }
             platforms.add(platform);
         }
+
+       singlePlatform.bounds.set(player.bounds.x, player.bounds.y - player.image.getHeight() - singlePlatform.image.getHeight(), singlePlatform.image.getWidth(), singlePlatform.image.getHeight());
 
 
         camera.position.set(width/2, height/2, 0);
@@ -92,13 +110,22 @@ public class MegaJumper extends ApplicationAdapter {
 */
             for (int i = 0; i < numPlatform; i++) {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
-                    player.velocity.y =  2 * height;
+                    player.velocity.y = 2* height;
                     score++;
                 }
 
+
                 if (platforms.get(i).bounds.y < camera.position.y - height){
                     platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
-                    platforms.get(i).bounds.x = ((float)(Math.random() * (width - platforms.get(i).image.getWidth())));
+                    platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() , platforms.get(i).image.getWidth()) + platforms.get(i).bounds.x);
+
+                    if(platforms.get(i).bounds.x < 0 ){
+                        platforms.get(i).bounds.x = platforms.get(i).bounds.x + 2 * platforms.get(i).image.getWidth();
+                    }
+
+                    if(platforms.get(i).bounds.x > width - platforms.get(i).image.getWidth()){
+                        platforms.get(i).bounds.x = platforms.get(i).bounds.x - 2 * platforms.get(i).image.getWidth();
+                    }
                 }
 
             }
@@ -127,7 +154,7 @@ public class MegaJumper extends ApplicationAdapter {
             }
 
 
-            if (player.position.y < camera.position.y - height / 2) {
+            if (player.position.y < camera.position.y - height) {
                 state = 2;
             }
         }
