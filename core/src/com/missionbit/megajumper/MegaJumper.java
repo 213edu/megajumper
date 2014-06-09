@@ -27,7 +27,7 @@ public class MegaJumper extends ApplicationAdapter {
     private OrthographicCamera camera;
     private BitmapFont font;
     private int score;
-    int highscore;
+    float highscore;
     int state;
     Platform singlePlatform;
     Music bgm;
@@ -49,7 +49,7 @@ public class MegaJumper extends ApplicationAdapter {
         gravity = new Vector2();
         player = new Player();
         platforms = new ArrayList<Platform>();
-        numPlatform = 2;
+        numPlatform = 12;
         camera = new OrthographicCamera(width,height);
         font = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
         singlePlatform = new Platform();
@@ -82,7 +82,7 @@ public class MegaJumper extends ApplicationAdapter {
 
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
-            platform.bounds.set(randomWithRange(0, platform.image.getWidth() + platform.bounds.x), height * i, platform.image.getWidth(),platform.image.getHeight());
+            platform.bounds.set(randomWithRange(0, platform.image.getWidth() + platform.bounds.x), height/6 * i, platform.image.getWidth(),platform.image.getHeight());
             if (platform.bounds.x > width - platform.image.getWidth()){
                 platform.bounds.x = 0;
             }
@@ -119,21 +119,26 @@ public class MegaJumper extends ApplicationAdapter {
 */
             for (int i = 0; i < numPlatform; i++) {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
-                    player.velocity.y = 2* height;
-                    score++;
+                    player.velocity.y = player.velocity.y + height/64;
+                    System.out.println(player.velocity.y);
                 }
 
 
                 if (platforms.get(i).bounds.y < camera.position.y - height){
                     platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
-                    platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() , platforms.get(i).image.getWidth()) + platforms.get(i).bounds.x);
+                    if(i < numPlatform && i != 0){
+                        platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /2 , platforms.get(i).image.getWidth() / 2) + platforms.get(i-1).bounds.x);
+                    }
+                    if(i == 0){
+                        platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /2 , platforms.get(i).image.getWidth() / 2) + platforms.get(numPlatform - 1).bounds.x);
 
+                    }
                     if(platforms.get(i).bounds.x < 0 ){
-                        platforms.get(i).bounds.x = platforms.get(i).bounds.x + 2 * platforms.get(i).image.getWidth();
+                        platforms.get(i).bounds.x = platforms.get(i).bounds.x +  platforms.get(i).image.getWidth();
                     }
 
                     if(platforms.get(i).bounds.x > width - platforms.get(i).image.getWidth()){
-                        platforms.get(i).bounds.x = platforms.get(i).bounds.x - 2 * platforms.get(i).image.getWidth();
+                        platforms.get(i).bounds.x = platforms.get(i).bounds.x -  platforms.get(i).image.getWidth();
                     }
                 }
 
@@ -141,8 +146,8 @@ public class MegaJumper extends ApplicationAdapter {
 
 
 
-            if (score > highscore) {
-                highscore = score;
+            if (player.velocity.y > highscore) {
+                highscore = player.velocity.y;
             }
 
             if (player.position.x < -player.image.getWidth()) {
@@ -192,7 +197,7 @@ public class MegaJumper extends ApplicationAdapter {
             batch.begin();
             font.setScale(2);
             font.setColor(0, 0, 0, 1);
-            font.draw(batch, "" + score, width / 2, camera.position.y + height / 2 - font.getLineHeight());
+            font.draw(batch, "" + player.velocity.y, width / 2, camera.position.y + height / 2 - font.getLineHeight());
             batch.draw(player.image, player.position.x, player.position.y);
             for (int i= 0; i < numPlatform; i++){
                 batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
