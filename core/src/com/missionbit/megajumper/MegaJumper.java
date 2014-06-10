@@ -119,16 +119,16 @@ public class MegaJumper extends ApplicationAdapter {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
 
                         player.velocity.y = player.velocity.y + height / 80;
-                    
+
                 }
 
                 if (platforms.get(i).bounds.y < camera.position.y - height){
                     platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
                     if(i < numPlatform && i != 0){
-                        platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /3 , platforms.get(i).image.getWidth() / 3) + platforms.get(i-1).bounds.x);
+                        platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /5 , platforms.get(i).image.getWidth() / 5) + platforms.get(i-1).bounds.x);
                     }
                     if(i == 0){
-                        platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /3 , platforms.get(i).image.getWidth() / 3) + platforms.get(numPlatform - 1).bounds.x);
+                        platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /5 , platforms.get(i).image.getWidth() / 5) + platforms.get(numPlatform - 1).bounds.x);
 
                     }
                     if(platforms.get(i).bounds.x < 0 ){
@@ -185,6 +185,7 @@ public class MegaJumper extends ApplicationAdapter {
             batch.begin();
             batch.draw(player.image, 0, 0);
             font.setColor(0, 0, 0, 1);
+            font.setScale(2);
             font.draw(batch, "Tap to start", 0, height / 2);
             batch.end();
         }
@@ -195,8 +196,8 @@ public class MegaJumper extends ApplicationAdapter {
             batch.begin();
             font.setScale(2);
             font.setColor(0, 0, 0, 1);
-            font.draw(batch, "Speed: " + player.velocity.y/10, width / 2, camera.position.y + height / 2 - font.getLineHeight());
-            font.draw(batch, "Fastest: " + highscore/10, width / 2, camera.position.y + height / 2 - 2*font.getLineHeight());
+            font.draw(batch, "Speed: " + player.velocity.y/10, width / 4 , camera.position.y + height / 2 - font.getLineHeight());
+            font.draw(batch, "Fastest: " + highscore/10, width / 4, camera.position.y + height / 2 - 2*font.getLineHeight());
 
             batch.draw(player.image, player.position.x, player.position.y);
             for (int i= 0; i < numPlatform; i++){
@@ -208,6 +209,7 @@ public class MegaJumper extends ApplicationAdapter {
         else if (state == 2){
             batch.begin();
             font.setColor(0,0,0,1);
+            font.setScale(2);
             font.draw(batch, "Fastest Speed: " + highscore/10, camera.position.x - width /2 , camera.position.y);
             font.draw(batch, "Tap to Restart", camera.position.x - width/ 2, camera.position.y - font.getLineHeight());
             batch.end();
