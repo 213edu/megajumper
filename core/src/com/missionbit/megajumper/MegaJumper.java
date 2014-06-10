@@ -161,6 +161,9 @@ public class MegaJumper extends ApplicationAdapter {
                 player.position.x = -player.image.getWidth();
             }
             //thanks @RyanShee
+
+
+            
             player.velocity.x = (accelX * -400);
             player.velocity.add(gravity);
             player.position.mulAdd(player.velocity, deltaTime);
