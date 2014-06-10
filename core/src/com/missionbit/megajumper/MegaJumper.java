@@ -76,8 +76,6 @@ public class MegaJumper extends ApplicationAdapter {
         player.velocity.set(width/2,0);
         player.velocity.set(0,0);
         gravity.set(0,-20);
-        player.bounds.set(width/2, player.image.getHeight(), player.image.getWidth(),player.image.getHeight());
-
         platforms.clear();
 
         for (int i = 0; i < numPlatform; i++){
@@ -92,8 +90,9 @@ public class MegaJumper extends ApplicationAdapter {
             platforms.add(platform);
         }
 
-       singlePlatform.bounds.set(player.bounds.x, player.bounds.y - player.image.getHeight() - singlePlatform.image.getHeight(), singlePlatform.image.getWidth(), singlePlatform.image.getHeight());
+        singlePlatform.bounds.set(player.bounds.x, player.bounds.y - player.image.getHeight() - singlePlatform.image.getHeight(), singlePlatform.image.getWidth(), singlePlatform.image.getHeight());
 
+        player.bounds.set(width/2, player.image.getHeight(), player.image.getWidth(),player.image.getHeight());
 
         camera.position.set(width/2, height/2, 0);
         state = 0;
@@ -119,8 +118,8 @@ public class MegaJumper extends ApplicationAdapter {
 */
             for (int i = 0; i < numPlatform; i++) {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
-                    player.velocity.y = player.velocity.y + height/64;
-                    System.out.println(player.velocity.y);
+                        player.velocity.y = player.velocity.y + height/64;
+                        System.out.println(player.velocity.y);
                 }
 
 
@@ -198,6 +197,8 @@ public class MegaJumper extends ApplicationAdapter {
             font.setScale(2);
             font.setColor(0, 0, 0, 1);
             font.draw(batch, "Speed: " + player.velocity.y, width / 2, camera.position.y + height / 2 - font.getLineHeight());
+            font.draw(batch, "Fastest: " + highscore, width / 2, camera.position.y + height / 2 - 2*font.getLineHeight());
+
             batch.draw(player.image, player.position.x, player.position.y);
             for (int i= 0; i < numPlatform; i++){
                 batch.draw(platforms.get(i).image, platforms.get(i).bounds.x, platforms.get(i).bounds.y);
