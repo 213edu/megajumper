@@ -3,6 +3,7 @@ package com.missionbit.megajumper;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
@@ -27,12 +28,13 @@ public class MegaJumper extends ApplicationAdapter {
     private OrthographicCamera camera;
     private BitmapFont font;
     private int score;
-    float highscore;
+    float highScore;
+    float sectionHighScore;
     int state;
     Platform singlePlatform;
     Music bgm;
     //Sound ding;
-
+    Preferences prefs;
 
 
     float randomWithRange(float min, float max)
@@ -55,6 +57,9 @@ public class MegaJumper extends ApplicationAdapter {
         singlePlatform = new Platform();
         //Sound ding = Gdx.audio.newSound(Gdx.files.internal("ding.mp3"));
         bgm = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+        prefs = Gdx.app.getPreferences("pref");
+        sectionHighScore = 0;
+
 
         resetGame();
     }
@@ -69,10 +74,7 @@ public class MegaJumper extends ApplicationAdapter {
     }
 
     private void resetGame() {
-
-
-
-        score = 0;
+        highScore = prefs.getFloat("highScore");
         player.velocity.set(500,0);
         gravity.set(0,-20);
         platforms.clear();
@@ -144,8 +146,12 @@ public class MegaJumper extends ApplicationAdapter {
 
 
 
-            if (player.velocity.y > highscore) {
-                highscore = player.velocity.y;
+            if (player.velocity.y > highScore) {
+                highScore = player.velocity.y;
+            }
+
+            if (player.velocity.y > sectionHighScore) {
+                sectionHighScore = player.velocity.y;
             }
 
             if (player.position.x < -player.image.getWidth()) {
@@ -168,6 +174,8 @@ public class MegaJumper extends ApplicationAdapter {
 
             if (player.position.y < camera.position.y - height) {
                 state = 2;
+                prefs.putFloat("highScore", highScore);
+                prefs.flush();
             }
         }
             if (state == 2) {
@@ -194,10 +202,11 @@ public class MegaJumper extends ApplicationAdapter {
             camera.update();
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
-            font.setScale(2);
+            font.setScale(1);
             font.setColor(0, 0, 0, 1);
-            font.draw(batch, "Speed: " + player.velocity.y/10, width / 4 , camera.position.y + height / 2 - font.getLineHeight());
-            font.draw(batch, "Fastest: " + highscore/10, width / 4, camera.position.y + height / 2 - 2*font.getLineHeight());
+            font.draw(batch, "Speed: " + player.velocity.y/10, 0 , camera.position.y + height / 2 - font.getLineHeight());
+            font.draw(batch, "SectionFastest: " + sectionHighScore/10, 0, camera.position.y + height / 2 - 2*font.getLineHeight());
+            font.draw(batch, "AllTimeFastest: " + highScore/10, 0, camera.position.y + height / 2 - 3*font.getLineHeight());
 
             batch.draw(player.image, player.position.x, player.position.y);
             for (int i= 0; i < numPlatform; i++){
@@ -210,7 +219,7 @@ public class MegaJumper extends ApplicationAdapter {
             batch.begin();
             font.setColor(0,0,0,1);
             font.setScale(2);
-            font.draw(batch, "Fastest Speed: " + highscore/10, camera.position.x - width /2 , camera.position.y);
+            font.draw(batch, "Fastest Speed: " + prefs.getFloat("highScore")/10, camera.position.x - width /2 , camera.position.y);
             font.draw(batch, "Tap to Restart", camera.position.x - width/ 2, camera.position.y - font.getLineHeight());
             batch.end();
         }
