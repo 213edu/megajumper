@@ -158,7 +158,7 @@ public class MegaJumper extends ApplicationAdapter {
                 player.position.x = width;
             }
             if (player.position.x > width) {
-                player.position.x = 0;
+                player.position.x = -player.image.getWidth();
             }
             //thanks @RyanShee
             player.velocity.x = (accelX * -400);
