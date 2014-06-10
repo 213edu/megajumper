@@ -117,10 +117,10 @@ public class MegaJumper extends ApplicationAdapter {
 */
             for (int i = 0; i < numPlatform; i++) {
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
-                        player.velocity.y = player.velocity.y + height/64;
-                        System.out.println(player.velocity.y);
-                }
 
+                        player.velocity.y = player.velocity.y + height / 80;
+                    
+                }
 
                 if (platforms.get(i).bounds.y < camera.position.y - height){
                     platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
