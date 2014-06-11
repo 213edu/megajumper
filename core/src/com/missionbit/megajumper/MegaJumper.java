@@ -60,7 +60,6 @@ public class MegaJumper extends ApplicationAdapter {
         prefs = Gdx.app.getPreferences("pref");
         sectionHighScore = 0;
 
-
         resetGame();
     }
 
@@ -68,17 +67,34 @@ public class MegaJumper extends ApplicationAdapter {
     public void render () {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         updateGame();
         drawGame();
     }
 
     private void resetGame() {
+        //reads highScore from phone
         highScore = prefs.getFloat("highScore");
+
+        //physics
         player.velocity.set(500,0);
         gravity.set(0,-20);
+
+        //clears the platforms
         platforms.clear();
 
+        //set up the initial player pos and camera pos
+        singlePlatform.bounds.set(player.bounds.x, player.bounds.y - player.image.getHeight() - singlePlatform.image.getHeight(), singlePlatform.image.getWidth(), singlePlatform.image.getHeight());
+        player.position.set(width/2 - player.image.getWidth(), height/2 - player.image.getHeight());
+        player.bounds.set(width/2, player.image.getHeight(), player.image.getWidth(),player.image.getHeight());
+        camera.position.set(width/2, height/2, 0);
+
+        //reset state in updateGame
+        state = 0;
+
+        //players background music
+        bgm.play();
+
+        //set up initial platforms
         for (int i = 0; i < numPlatform; i++){
             Platform platform = new Platform();
             platform.bounds.set(randomWithRange(0, platform.image.getWidth() + platform.bounds.x), height/8 * i, platform.image.getWidth(),platform.image.getHeight());
@@ -90,18 +106,11 @@ public class MegaJumper extends ApplicationAdapter {
             }
             platforms.add(platform);
         }
-
-        singlePlatform.bounds.set(player.bounds.x, player.bounds.y - player.image.getHeight() - singlePlatform.image.getHeight(), singlePlatform.image.getWidth(), singlePlatform.image.getHeight());
-        player.position.set(width/2 - player.image.getWidth(), height/2 - player.image.getHeight());
-        player.bounds.set(width/2, player.image.getHeight(), player.image.getWidth(),player.image.getHeight());
-
-        camera.position.set(width/2, height/2, 0);
-        state = 0;
-        bgm.play();
     }
 
     private void updateGame() {
 
+        //start up screen
         if (state == 0) {
             //display starting screen
             if (Gdx.input.justTouched()) {
@@ -109,21 +118,21 @@ public class MegaJumper extends ApplicationAdapter {
             }
         }
 
+        //in game
         if (state == 1) {
             float deltaTime = Gdx.graphics.getDeltaTime();
             float accelX = Gdx.input.getAccelerometerX();
-/*
-            if (Gdx.input.justTouched()) {
-                player.velocity.y = height;
-            }
-*/
+
             for (int i = 0; i < numPlatform; i++) {
+
+                //when player avatar touches the platform, accelerates the player
                 if (platforms.get(i).bounds.overlaps(player.bounds)) {
 
                         player.velocity.y = player.velocity.y + height / 80;
 
                 }
 
+                //random generates platforms that are close to each other
                 if (platforms.get(i).bounds.y < camera.position.y - height){
                     platforms.get(i).bounds.y = platforms.get(i).bounds.y + height * 2;
                     if(i < numPlatform && i != 0){
@@ -133,6 +142,8 @@ public class MegaJumper extends ApplicationAdapter {
                         platforms.get(i).bounds.x = (randomWithRange(-platforms.get(i).image.getWidth() /5 , platforms.get(i).image.getWidth() / 5) + platforms.get(numPlatform - 1).bounds.x);
 
                     }
+
+                    //sets the boundaries of platforms
                     if(platforms.get(i).bounds.x < 0 ){
                         platforms.get(i).bounds.x = platforms.get(i).bounds.x +  platforms.get(i).image.getWidth();
                     }
@@ -144,16 +155,15 @@ public class MegaJumper extends ApplicationAdapter {
 
             }
 
-
-
+            //updates player high score
             if (player.velocity.y > highScore) {
                 highScore = player.velocity.y;
             }
-
             if (player.velocity.y > sectionHighScore) {
                 sectionHighScore = player.velocity.y;
             }
 
+            //L-R portal
             if (player.position.x < -player.image.getWidth()) {
                 player.position.x = width;
             }
@@ -162,26 +172,23 @@ public class MegaJumper extends ApplicationAdapter {
             }
             //thanks @RyanShee
 
-
-            
             player.velocity.x = (accelX * -400);
             player.velocity.add(gravity);
             player.position.mulAdd(player.velocity, deltaTime);
             player.bounds.setX(player.position.x);
             player.bounds.setY(player.position.y);
-
             if (camera.position.y < player.position.y) {
                 camera.position.set(width / 2, player.position.y, 0);
             }
-
-
             if (player.position.y < camera.position.y - height) {
                 state = 2;
                 prefs.putFloat("highScore", highScore);
                 prefs.flush();
             }
         }
-            if (state == 2) {
+
+        //GAMEOVER
+        if (state == 2) {
                 //display high score and touch to reset screen
                 if (Gdx.input.justTouched()) {
                     resetGame();
@@ -190,6 +197,7 @@ public class MegaJumper extends ApplicationAdapter {
             }
     }
 
+    //prints out the game on the screen on different stages
     private void drawGame() {
 
         if (state == 0){
